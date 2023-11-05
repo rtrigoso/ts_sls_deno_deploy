@@ -1,0 +1,19 @@
+name: 'Check Mergable by label'
+on:
+  pull_request:
+    types:
+      - opened
+      - reopened
+      - synchronize
+      - edited
+      - labeled
+      - unlabeled
+jobs:
+  fail-by-label:
+    if: ! contains(github.event.pull_request.labels.*.name, 'ready-to-merge')
+    runs-on: ubuntu-latest
+    steps:
+      - name: success if PR is labeled "ready-to-merge"
+        run: |
+          echo "This PR is labeled as do not merge!"
+          exit 1

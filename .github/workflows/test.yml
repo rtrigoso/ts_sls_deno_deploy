@@ -1,0 +1,28 @@
+name: test
+on:
+  workflow_dispatch:
+  pull_request:
+    branches:
+      - master
+  permissions:
+    contents: write
+    pull_request_target: write
+jobs:
+  test:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Setup repo
+        uses: actions/checkout@v3
+      - name: Setup Deno
+        uses: denoland/setup-deno@v1
+        with:
+          deno-version: v1.x
+      - name: Verify formatting
+        run: deno fmt --check deno/*
+      - name: Run linter
+        run: deno lint deno/*
+      - name: Run tests
+        run: deno test -A deno/*
+      - name: Add label if tests pass
+        uses: actions/labeler@v4
+        if: ${{ success() }}
